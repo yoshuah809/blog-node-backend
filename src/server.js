@@ -1,9 +1,9 @@
 import express from "express";
 
 let articlesInfo = [
-	{ name: "learn-react", upvotes: 0 },
-	{ name: "learn-node", upvotes: 0 },
-	{ name: "learn-vue", upvotes: 0 },
+	{ name: "learn-react", upvotes: 0, comments: [] },
+	{ name: "learn-node", upvotes: 0, comments: [] },
+	{ name: "learn-vue", upvotes: 0, comments: [] },
 ];
 const app = express();
 
@@ -15,6 +15,20 @@ app.put("/api/articles/:name/upvote", (req, res) => {
 	if (article) {
 		article.upvotes += 1;
 		res.send(`The ${name} article now has ${article.upvotes} upvotes!!!`);
+	} else {
+		res.send("That article does not exist");
+	}
+});
+
+app.post("/api/articles/:name/comments", (req, res) => {
+	const { name } = req.params;
+	const { postedBy, text } = req.body;
+
+	const article = articlesInfo.find((a) => a.name === name);
+
+	if (article) {
+		article.comments.push({ postedBy, text });
+		res.send(article.comments);
 	} else {
 		res.send("That article does not exist");
 	}
